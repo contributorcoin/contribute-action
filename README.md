@@ -1,4 +1,4 @@
-# Contributercoin
+# Contributorcoin
 
 > WARNING: This action is being used for test purposes and is not yet ready for production!
 
