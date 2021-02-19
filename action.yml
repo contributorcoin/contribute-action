@@ -2,7 +2,7 @@ name: Contributorcoin
 description: Automatically sends a request for Contributorcoin when a pull request is merged
 author: Contributorcoin
 branding:
-  icon: reward
+  icon: award
   color: purple
 on:
   pull_request:
