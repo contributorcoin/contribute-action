@@ -1,4 +1,9 @@
-name: contributorcoin
+name: Contributorcoin
+description: Automatically sends a request for Contributorcoin when a pull request is merged
+author: Contributorcoin
+branding:
+  icon: reward
+  color: purple
 on:
   pull_request:
     types: [closed]
