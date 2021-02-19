@@ -17,7 +17,7 @@ jobs:
         id: request
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://api.contributorcoin.com/contribute'
+          url: 'https://api.contributorcoin.com/v1/contribute'
           method: 'POST'
           data: '{committer:"${{github.event.pull_request.merged_by.login}}", contributor:"${{github.event.pull_request.user.login}}", url:"${{github.event.pull_request.base.repo.html_url}}/commit/${{github.event.pull_request.merge_commit_sha}}"}'
       - name: Show Response
