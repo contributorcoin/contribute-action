@@ -1,0 +1,19 @@
+name: contributorcoin
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  send-contributorcoin-request:
+    name: Send Contributorcoin request
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make API Request
+        id: request
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://api.contributorcoin.com/contribute'
+          method: 'POST'
+          data: '{committer:"${{github.event.pull_request.merged_by.login}}", contributor:"${{github.event.pull_request.user.login}}", url:"${{github.event.pull_request.base.repo.html_url}}/commit/${{github.event.pull_request.merge_commit_sha}}"}'
+      - name: Show Response
+        run: echo ${{ steps.request.outputs.response }}
