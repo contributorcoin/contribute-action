@@ -1,15 +1,12 @@
 name: Release Drafter
-
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    types: [opened, reopened, synchronize]
-  workflow_dispatch:
+    branches: [ $default-branch ]
+    types: [ closed ]
 
 jobs:
   update_release_draft:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       # Drafts your next Release notes as Pull Requests are merged into "master"
