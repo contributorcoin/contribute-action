@@ -6,17 +6,19 @@ branding:
   color: purple
 on:
   pull_request:
-    branches: [ $default-branch ]
-    types: [ closed ]
+    branches: [ main, master ]
+    types: [closed]
 jobs:
   send-contributorcoin-request:
     name: Send Contributorcoin request
 
     # CONDITIONS THAT MUST BE MET
     # These are also checked on the API side, so these prevent calling the API when we know it will fail
-    if: github.event.pull_request.merged == true # PR must be merged
-    if: github.event.pull_request.base.repo.visibility == 'public' # Repo must be public
-    if: github.event.pull_request.base.repo.stargazers_count >= 100 # Star count must be at least 100
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.repo.visibility == 'public' &&
+      (github.event.pull_request.base.repo.full_name == 'contributorcoin/contributorcoin' ||
+      github.event.pull_request.base.repo.stargazers_count >= 100)
 
     runs-on: ubuntu-latest
     steps:
