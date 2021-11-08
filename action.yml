@@ -1,24 +1,42 @@
-name: Contributorcoin
-description: Automatically sends a request for Contributorcoin when a pull request is merged
+name: Request Contributorcoin for PR 
+description: Automatically sends a request for Contributorcoin when a pull request is merged into the default branch
 author: Contributorcoin
 branding:
   icon: award
   color: purple
 on:
   pull_request:
-    types: [closed]
+    branches: [ $default-branch ]
+    types: [ closed ]
 jobs:
   send-contributorcoin-request:
     name: Send Contributorcoin request
-    if: github.event.pull_request.merged == true
+
+    # CONDITIONS THAT MUST BE MET
+    # These are also checked on the API side, so these prevent calling the API when we know it will fail
+    if: github.event.pull_request.merged == true # PR must be merged
+    if: github.event.pull_request.base.repo.visibility == 'public' # Repo must be public
+    if: github.event.pull_request.base.repo.stargazers_count >= 100 # Star count must be at least 100
+
     runs-on: ubuntu-latest
     steps:
-      - name: Make API Request
+      # An additional condition check for approved reviews
+      - name: Check for reviews
+        id: reviews
+        uses: 'jrylan/github-action-reviews-counter@main'
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+        if: steps.reviews.outputs.approved >= 1
+      
+      # Send API request to Contributorcoin API
+      - name: Make API request
         id: request
         uses: fjogeleit/http-request-action@master
         with:
           url: 'https://api.contributorcoin.com/v1/contribute'
           method: 'POST'
-          data: '{committer:"${{github.event.pull_request.merged_by.login}}", contributor:"${{github.event.pull_request.user.login}}", url:"${{github.event.pull_request.base.repo.html_url}}/commit/${{github.event.pull_request.merge_commit_sha}}"}'
-      - name: Show Response
+          data: '{url:"${{github.event.pull_request.base.repo.html_url}}/commit/${{github.event.pull_request.merge_commit_sha}}"}'
+
+      # Shows the API response
+      - name: API response
         run: echo ${{ steps.request.outputs.response }}
